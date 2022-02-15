@@ -1,0 +1,68 @@
+name: Publish & Deploy ECR/ECS service
+
+permissions:
+  id-token: write
+  contents: read
+
+on:
+  workflow_call:
+    inputs:
+      role-to-assume:
+        type: string
+        required: true
+      role-session-name:
+        type: string
+        required: false
+        default: github-actions-deployment
+      aws-region:
+        type: string
+        required: false
+        default: us-east-1
+
+      ecr-repo:
+        type: string
+        required: true
+      ecr-tag:
+        type: string
+        required: false
+        default: latest
+
+      ecs-cluster:
+        description: "The short name or full Amazon Resource Name (ARN) of the cluster that your service runs on."
+        type: string
+        required: true
+      ecs-service:
+        description: "The name of the service to update."
+        type: string
+        required: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ inputs.role-to-assume }}
+          role-session-name: ${{ inputs.role-session-name }}
+          aws-region: ${{ inputs.aws-region }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push the image to Amazon ECR
+        id: build-image
+        uses: docker/build-push-action@v2
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/${{ inputs.ecr-repo }}:${{ inputs.ecr-tag }}
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service --cluster ${{ inputs.ecs-cluster }} --service ${{ inputs.ecs-service }} --force-new-deployment
