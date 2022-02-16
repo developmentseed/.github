@@ -1,0 +1,13 @@
+{
+    "name": "OIDC: Publish to ECR and update ECS",
+    "description": "Reusable workflow to build a docker image, publish it to ECR, and force a redeployment on a specified ECS service. Utilizes OIDC for authenticating with AWS.",
+    "categories": [
+        "aws",
+        "ecs",
+        "ecr",
+        "docker"
+    ],
+    "filePatterns": [
+        "^Dockerfile"
+    ]
+}
