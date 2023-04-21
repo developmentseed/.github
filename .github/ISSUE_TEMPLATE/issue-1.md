@@ -2,7 +2,7 @@
 name: Issue 1
 about: Issue 1 is used at the start of a new project or a new phase to capture details like goals, team composition, tracking and communication details.
 title: 'Issue 1'
-labels:
+labels: 'issue-1'
 assignees: ''
 
 ---
