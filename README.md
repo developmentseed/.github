@@ -42,3 +42,10 @@ All the other templates go inside the `PULL_REQUEST_TEMPLATE` directory. Each te
 Here's a quick video demonstrating the flow.
 
 https://user-images.githubusercontent.com/1090606/154234453-06adb23a-48e1-489c-9849-134fab1ceec4.mov
+
+## Issue 1 Template
+There's an Issue 1 template that can be used across any repositories in our Github account. Issue 1s are used to keep track of new projects and phases.
+
+Here's how you can use it. In a repo, click Issues > New Issue > Issue 1
+
+![issue-1-usage](https://user-images.githubusercontent.com/371666/233577660-c19c8ed7-8eb8-44b2-a050-ea002ed72bff.gif)
