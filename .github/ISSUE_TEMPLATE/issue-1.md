@@ -16,6 +16,9 @@ Briefly describe this partnership and the project. Link to any additional contex
 ## Goals
 <!-- Describe the goals of this phase of the project. -->
 
+## Partner and Stakeholders
+<!-- Any additional things about the partner, relationship or other stakeholders. -->
+
 ## Team
 <!-- List team members who will work on this project. Use a list with O for Owner and D for Doer and tag them 
 
@@ -33,7 +36,7 @@ For example:
 Share all the milestones for this phase. These can be shared as a table or list. Sometimes can also be linked to 10kft if it's planned in detail there.
 -->
 
-## Communications
+## Project Organization
 <!--
 List of all channels and repositories for communications related to this project
 For example:
@@ -41,6 +44,8 @@ For example:
 * #a-collab-slack-channel
 * This repo for internal coordination
 * Links to other github repos
+* Link to 10kft
+* Link to project boards if any
 -->
 
 ## Documents
