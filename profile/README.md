@@ -6,6 +6,7 @@ Development Seed is "open by default." We work with open-source technology to ma
 We collaborate with organizations and communities eager to address some of the world's most challenging problems. Take a look at some of our pinned repositories to get a sense of what we do. Want to make a contribution? Make a pull request!
 
 ## Learn More About What We Work On
+- [Modern Cloud Infrastructure for Serving STAC Collections](https://developmentseed.org/blog/2023-07-17-say-hello-eoapi)
 - [Human-in-the-loop approach to AI](https://developmentseed.org/blog/2022-03-15-open-sourcing-pearl)
 - [Be a part of the conversation around Earth Observation and join SatSummit](https://developmentseed.org/blog/2022-09-28-satsummit-2022)
 - [Our contributions to OpenStreetMap](https://developmentseed.org/blog/2019-11-12-further-and-faster-together-the-future-of-osm)
