@@ -25,8 +25,8 @@ body:
   - type: textarea
     id: acceptance
     attributes:
-      label: Acceptance Criteria
-      description: "List the tasks that need to be completed or artifacts that need to be produced to have this EPIC considered complete."
+      label: Acceptance-Criteria
+      description: "List the acceptance criteria that need to be completed or artifacts that need to be produced to have this EPIC considered complete."
         value: |
           -
           -
