@@ -8,10 +8,10 @@ We work with open-source technology to make the tools we build and use more broa
 It is no accident that open source is at the core of our business strategy. With over 500 public GitHub repositories, we firmly believe in making things people can share and reuse. By utilizing open components, this approach aggregates software investments into a collective public good. By adopting open licensing, we provide flexibility in tool utilization instead of burdening organizations with software license fees. At the heart of it all, we take immense pride in our work, always eager to present, share, and learn. We're not just creating software; we're fostering a community. We invite you to use our work, contribute to projects that resonate with you, and join us on this open-source journey.
 
 ## Learn More About What We Work On
-- [Modern Cloud Infrastructure for Serving STAC Collections](https://developmentseed.org/blog/2023-07-17-say-hello-eoapi)
-- [Human-in-the-loop approach to AI](https://developmentseed.org/blog/2022-03-15-open-sourcing-pearl)
-- [Fast, Interactive Geospatial Data Visualization from Python](https://developmentseed.org/blog/2023-10-23-lonboard)
-- [Greener Meetings with Co2ordinate](https://developmentseed.org/blog/2023-10-11-co2ordinate)
+- [A Map-First Tool for Exploring STAC Data](https://developmentseed.org/blog/2025-09-02-stacmap/)
+- [Language Interfaces for Maps](https://developmentseed.org/blog/2025-01-29-llms/)
+- [From Legacy CSVs to Cloud-Native Geodata](https://developmentseed.org/blog/2025-10-08-spatial-access-lab/)
+- [Zarr Everywhere](https://developmentseed.org/blog/2025-10-13-zarr/)
 
 ## We drive innovation forward through DevSeed Labs 🌱
 Development Seed hires some of the smartest, most passionate [people](https://developmentseed.org/team) eager to solve the planet's toughest problems, usually collaborating with mission-driven partners.
