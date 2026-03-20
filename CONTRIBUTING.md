@@ -3,6 +3,7 @@ This policy applies to the open-source project it is distributed with. This poli
 
 ## Purpose
 Our goal with this policy is to ensure high and reliable software quality by keeping humans in the loop in a collaborative creative environment. We therefore require contributors to show consideration and follow the below policy, in particular when using tools powered by Artificial Intelligence (AI) / Large Language Models (LLMs).
+
 ## Policy
 Our policy is that there must always be a human in the loop who is accountable for contributions and has read, reviewed, and understood all submitted code or text changes before they ask other project members to review them. Contributors should be sufficiently confident that the contribution is high enough quality that asking for a review is a good use of scarce maintainer time, and they should be able to answer questions about their work during review.
 
