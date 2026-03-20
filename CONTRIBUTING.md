@@ -1,5 +1,5 @@
 ## AI/LLM tool policy
-This policy applies to the open-source project it is distributed with. This policy was last updated March, 2026.
+This policy applies to the open-source project it is distributed with. This policy was last updated in March 2026.
 
 ## Purpose
 Our goal with this policy is to ensure high and reliable software quality by keeping humans in the loop in a collaborative creative environment. We therefore require contributors to show consideration and follow the below policy, in particular when using tools powered by Artificial Intelligence (AI) / Large Language Models (LLMs).
