@@ -1,9 +1,8 @@
 ## AI/LLM tool policy
 This policy applies to the open-source project it is distributed with. This policy was last updated March, 2026.
 
-## Summary
-Our policy is that contributors can use whatever tools they would like to craft their contributions, but there must be a human in the loop. Contributors must read and review all AI (Artificial Intelligence) / Large Language Model (LLM)-generated code or text before they ask other project members to review it. The contributor is always the author and is fully accountable for their contributions.
-
+## Purpose
+Our goal with this policy is to ensure high and reliable software quality by keeping humans in the loop in a collaborative creative environment. We therefore require contributors to show consideration and follow the below policy, in particular when using tools powered by Artificial Intelligence (AI) / Large Language Models (LLMs).
 ## Policy
 Our policy is that contributors can use whatever tools they would like to craft their contributions, but there must be a human in the loop. Contributors must read, review, and understand all AI (Artificial Intelligence) / Large Language Model (LLM)-generated code or text before they ask other project members to review it. The contributor is always the author and is fully accountable for their contributions. Contributors should be sufficiently confident that the contribution is high enough quality that asking for a review is a good use of scarce maintainer time, and they should be able to answer questions about their work during review.
 
