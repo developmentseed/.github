@@ -20,8 +20,8 @@ To ensure sufficient self review and understanding of the work, it is strongly r
 
 An important implication of this policy is that it bans agents that take action in our digital spaces without human approval, such as the GitHub @claude agent. Similarly, automated review tools that publish comments without human review are not allowed. However, an opt-in review tool that keeps a human in the loop is acceptable under this policy. As another example, using an LLM to generate documentation, which a contributor manually reviews for correctness and relevance, edits, and then posts as a PR, is an approved use of tools under this policy.
 
-## Extractive Contributions
-The reason for our "human-in-the-loop" contribution policy is that processing patches, PRs, RFCs, comments, issues, security alerts to the codebase is not free -- it takes a lot of maintainer time and energy to review those contributions! Sending the unreviewed output of an LLM to open source project maintainers extracts work from them in the form of design and code review, so we call this kind of contribution an "extractive contribution".
+## Distractive Contributions
+The reason for our "human-in-the-loop" contribution policy is that processing patches, PRs, RFCs, comments, issues, security alerts to the codebase is not free -- it takes a lot of maintainer time and energy to review those contributions! Sending the unreviewed output of an LLM to open source project maintainers extracts work from them in the form of design and code review, so we call this kind of contribution an "distractive contribution".
 
 Our golden rule is that a contribution should be worth more to the project than the time it takes to review it. These ideas are captured by this quote from the book [Working in Public](https://press.stripe.com/working-in-public) by Nadia Eghbal:
 
@@ -41,9 +41,9 @@ project for us to review it. Please see our developer policy on
 AI-generated contributions in `CONTRIBUTING.md`
 ```
 
-The best ways to make a change less extractive and more valuable are to reduce its size or complexity or to increase its usefulness to the community. These factors are impossible to weigh objectively, and our project policy leaves this determination up to the maintainers of the project, i.e. those who are doing the work of sustaining the project.
+The best ways to make a change less extractive and more valuable are to reduce its size or complexity or to increase its usefulness to the community. These factors are impossible to weigh objectively, and our project policy leaves this determination up to the maintainers of the project.
 
-If/or when it becomes clear that a GitHub issue or PR is off-track and not moving in the right direction, maintainers should apply the extractive label to help other reviewers prioritize their review time.
+If/or when it becomes clear that a GitHub issue or PR is off-track and not moving in the right direction, maintainers should apply the `distractive` label to help other reviewers prioritize their review time.
 
 If a contributor fails to make their change meaningfully less extractive, maintainers may lock the conversation and/or close the pull request/issue/RFC. In case of repeated violations of our policy, this project reserves itself the right to ban temporarily or indefinitely the infringing person/account.
 
