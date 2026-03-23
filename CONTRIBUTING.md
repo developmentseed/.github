@@ -1,13 +1,13 @@
 ## AI/LLM tool policy
-This policy applies to the project it is distributed with. This policy was last updated in March 2026.
+This policy was last updated in March 2026.
 
 ## Purpose
-Our goal with this policy is to ensure high and reliable software quality by keeping humans in the loop in a collaborative creative environment. We therefore require contributors to show consideration and follow the below policy, in particular when using tools powered by Artificial Intelligence (AI) / Large Language Models (LLMs).
+Our goal with this policy is to ensure high-quality, reliable software by keeping humans in the loop. We therefore require contributors to follow the below policy whenever using tools powered by Artificial Intelligence (AI), such as Large Language Models (LLMs).
 
 ## Policy
 Our policy is that there must always be a human in the loop who is accountable for contributions and has read, reviewed, and understood all submitted code or text changes before asking other project members to review them. Contributors should be sufficiently confident that the contribution is high enough quality that providing a review is a good use of scarce maintainer time, and they should be able to answer questions about their work during review.
 
-We aspire to be a welcoming community that helps new human contributors grow their expertise. We expect that new contributors will be less confident in their contributions, and our guidance to them is to start with small contributions that they can fully understand to build confidence and learn by taking small steps, getting feedback, and iterating. Maintainers are willing to support new human contributors through their thoughtful and empathetic feedback.
+We aspire to be a welcoming community that helps new human contributors grow their expertise. Understanding that new contributors may be less confident in their contributions, we suggest starting with targeted, bite-size contributions. These are both easier for maintainers to review and more likely to be accepted.
 
 This policy includes, but is not limited to, the following kinds of contributions:
 * Code, usually in the form of a pull request
@@ -51,4 +51,4 @@ If a contributor fails to make their change meaningfully less extractive, mainta
 Artificial intelligence systems raise many questions around copyright that have yet to be answered. Our policy on AI tools is similar to our copyright policy: Contributors are responsible for ensuring that they have the right to contribute code under the terms of our license, typically meaning that either they, their employer, or their collaborators hold the copyright. Using AI tools to regenerate copyrighted material does not remove the copyright, and contributors are responsible for ensuring that such material does not appear in their contributions. Contributions found to violate this policy will be removed just like any other offending contribution. If a reviewer has doubts about the legal aspects of a contribution, they may ask the contributor to provide more details on the origins of a particular piece of code.
 
 ## Credits for this document
-This document is adapted from [GDAL’s AI/LLM user policy](https://gdal.org/en/stable/community/ai_tool_policy.html) which in turn is an adaptation of the [LLVM software "AI Tool Use Policy"](https://github.com/llvm/llvm-project/blob/main/llvm/docs/AIToolPolicy.md), and due credits go to its original authors: Reid Kleckner, Hubert Tong and "maflcko".
+This document is adapted from [GDAL’s AI/LLM user policy](https://gdal.org/en/stable/community/ai_tool_policy.html) which in turn is an adaptation of the [LLVM software "AI Tool Use Policy"](https://github.com/llvm/llvm-project/blob/main/llvm/docs/AIToolPolicy.md).
