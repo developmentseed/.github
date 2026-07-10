@@ -139,14 +139,17 @@ jobs:
       # The action has no built-in cost display, but its execution log's
       # final result record carries the run metrics — append them to the
       # review comment. The sticky comment has no marker; find it the way
-      # the action itself does (latest comment by a claude bot), and PATCH
-      # with the action's own token so we edit as the comment's author.
-      # With subscription (OAuth) auth the cost is the API-equivalent
-      # estimate, not an actual charge.
+      # the action itself does (latest comment by a claude bot). Use the
+      # job's own token: the action's github_token output is a Claude App
+      # token that the action revokes in its own final step, so it is
+      # always dead (401) by the time this step runs. Failures here warn
+      # instead of failing the job — a missing footer is not worth a red X
+      # on the PR. With subscription (OAuth) auth the cost is the
+      # API-equivalent estimate, not an actual charge.
       - name: Append cost to review comment
         if: inputs.show_cost && steps.claude.outputs.execution_file != ''
         env:
-          GH_TOKEN: ${{ steps.claude.outputs.github_token || github.token }}
+          GH_TOKEN: ${{ github.token }}
           EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
@@ -158,9 +161,19 @@ jobs:
             "$cost" $((ms / 60000)) $((ms / 1000 % 60)) "$turns")
           id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
             --jq '.[] | select(.user.type == "Bot" and (.user.login | ascii_downcase | contains("claude"))) | .id' \
-            | tail -1)
-          if [ -z "$id" ]; then exit 0; fi
-          gh api "repos/$GITHUB_REPOSITORY/issues/comments/$id" --jq .body > "$RUNNER_TEMP/body.md"
+            | tail -1) || true
+          # gh prints the error body to stdout on API failures, so require a
+          # numeric id rather than merely a non-empty one.
+          if ! [[ "$id" =~ ^[0-9]+$ ]]; then
+            echo "::warning::cost footer skipped: no review comment found"
+            exit 0
+          fi
+          if ! gh api "repos/$GITHUB_REPOSITORY/issues/comments/$id" --jq .body > "$RUNNER_TEMP/body.md"; then
+            echo "::warning::cost footer skipped: could not read comment $id"
+            exit 0
+          fi
           printf '%s' "$footer" >> "$RUNNER_TEMP/body.md"
-          gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" \
-            -F body=@"$RUNNER_TEMP/body.md" > /dev/null
+          if ! gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" \
+              -F body=@"$RUNNER_TEMP/body.md" > /dev/null; then
+            echo "::warning::cost footer skipped: could not update comment $id"
+          fi
