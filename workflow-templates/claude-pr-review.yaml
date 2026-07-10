@@ -16,7 +16,12 @@ jobs:
       contents: read
       pull-requests: write
       id-token: write
-    secrets:
-      # Create with `claude setup-token`; see
-      # https://github.com/developmentseed/.github#claude-pr-review
-      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+    # Picks up the org-level CLAUDE_CODE_OAUTH_TOKEN secret (create with
+    # `claude setup-token`; see
+    # https://github.com/developmentseed/.github#claude-pr-review).
+    # To use a different token for this repo, either add a repo-level
+    # secret with the same name (it shadows the org secret), or replace
+    # `inherit` with an explicit mapping:
+    #   secrets:
+    #     CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.MY_OTHER_TOKEN }}
+    secrets: inherit

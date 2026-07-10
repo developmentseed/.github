@@ -33,15 +33,21 @@ jobs:
       contents: read
       pull-requests: write
       id-token: write
+    secrets: inherit
+```
+
+`secrets: inherit` picks up the org-level `CLAUDE_CODE_OAUTH_TOKEN` secret, so most repos need no secret setup at all. To use a different token for one repo, either add a repo-level secret with the same name (it shadows the org secret), or map one explicitly instead of inheriting:
+
+```yaml
     secrets:
-      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.MY_OTHER_TOKEN }}
 ```
 
 #### Creating the `CLAUDE_CODE_OAUTH_TOKEN` secret
 
 1. On a machine with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and logged in with a Claude subscription (Pro/Max), run `claude setup-token`.
 2. Approve the OAuth flow in the browser and copy the generated long-lived token (starts with `sk-ant-oat01-`).
-3. Save it as an Actions secret named `CLAUDE_CODE_OAUTH_TOKEN` — at the org level (Settings → Secrets and variables → Actions → New organization secret) so every repo can use it, or per-repo.
+3. Save it as an Actions secret named `CLAUDE_CODE_OAUTH_TOKEN` — at the org level (Settings → Secrets and variables → Actions → New organization secret) so every repo gets it via `secrets: inherit`, or per-repo. The token bills the subscription of whoever ran `setup-token`, so prefer a service/bot account for the org secret.
 
 
 ## Multiple Pull Request templates
