@@ -1,0 +1,166 @@
+# Reusable Claude PR review: correctness and security findings, plus an
+# over-engineering pass via the ponytail plugin's review skill.
+#
+# Call from any repo (see workflow-templates/claude-pr-review.yaml for a
+# complete caller, or the README for secret setup):
+#
+#   jobs:
+#     review:
+#       uses: developmentseed/.github/.github/workflows/claude-pr-review.yml@main
+#       permissions:
+#         contents: read
+#         pull-requests: write
+#         id-token: write
+#       secrets: inherit  # or map CLAUDE_CODE_OAUTH_TOKEN explicitly
+#
+# Optional inputs (via `with:`): disable the ponytail pass, install extra
+# plugins, or append review instructions — see the inputs block below.
+name: Claude PR Review
+
+on:
+  workflow_call:
+    inputs:
+      ponytail:
+        description: Include the ponytail over-engineering review pass.
+        type: boolean
+        default: true
+      plugins:
+        description: Extra Claude Code plugins to install (newline-separated name@marketplace).
+        type: string
+        default: ""
+      plugin_marketplaces:
+        description: >-
+          Marketplace git URLs for the extra plugins (newline-separated, must
+          end in .git). Unpinned — the action installs their default branch.
+        type: string
+        default: ""
+      extra_instructions:
+        description: Extra instructions appended to the review prompt (e.g. directing Claude to use a custom plugin's skill).
+        type: string
+        default: ""
+      show_cost:
+        description: Append the estimated review cost to the PR review comment.
+        type: boolean
+        default: true
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN:
+        description: Long-lived Claude Code OAuth token; create with `claude setup-token`.
+        required: true
+
+jobs:
+  review:
+    # Skip PRs authored by bots (dependabot etc.). allowed_bots below is
+    # different: it lets the github-actions bot *trigger* reviews of PRs
+    # authored by humans or Claude.
+    if: github.event.pull_request.user.type != 'Bot'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    # Cancel an in-flight review when a new commit is pushed: the latest
+    # commit is the only one worth reviewing, and all runs share one sticky
+    # comment anyway.
+    concurrency:
+      group: claude-review-${{ github.event.pull_request.number }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+
+      # Fetch the ponytail plugin pinned to an exact commit (v4.8.4) so the
+      # review can't silently pick up new third-party code. The action's
+      # plugin_marketplaces input takes raw git URLs with no ref support, but
+      # it accepts local paths — so pin here and hand it the clone. To
+      # upgrade: pick a release from https://github.com/DietrichGebert/ponytail/tags
+      # and update the SHA + version comment together.
+      - name: Fetch ponytail plugin (v4.8.4, pinned)
+        if: inputs.ponytail
+        run: |
+          git init -q "$RUNNER_TEMP/ponytail"
+          git -C "$RUNNER_TEMP/ponytail" fetch -q --depth 1 \
+            https://github.com/DietrichGebert/ponytail.git \
+            bc9ee949d5f439e8b9f3bb92c6d6d3d1e6ebd324
+          git -C "$RUNNER_TEMP/ponytail" checkout -q FETCH_HEAD
+
+      - uses: anthropics/claude-code-action@v1
+        id: claude
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Allow the github-actions bot to trigger the review so that
+          # Claude-authored PRs get reviewed. Without this, the action
+          # aborts on bot actors ("Workflow initiated by non-human actor").
+          allowed_bots: "github-actions"
+          # Deliver the review as ONE sticky PR comment that updates in place
+          # each run. track_progress forces tag mode (a single tracking
+          # comment the action owns and updates with the final result on
+          # these pull_request events); use_sticky_comment makes it the SAME
+          # comment across pushes. A formal-review approach instead leaves
+          # multiple reviews per run and accumulates undismissable COMMENTED
+          # reviews across runs (GitHub can't dismiss or delete a submitted
+          # COMMENTED review).
+          track_progress: true
+          use_sticky_comment: true
+          # The ponytail plugin supplies the over-engineering review skill
+          # used in the prompt below; installed from the commit-pinned clone
+          # fetched above. Caller-supplied plugins are appended (the action
+          # trims and drops blank lines, so empty inputs are harmless).
+          plugin_marketplaces: |
+            ${{ inputs.ponytail && format('{0}/ponytail', runner.temp) || '' }}
+            ${{ inputs.plugin_marketplaces }}
+          plugins: |
+            ${{ inputs.ponytail && 'ponytail@ponytail' || '' }}
+            ${{ inputs.plugins }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR: ${{ github.event.pull_request.number }}
+
+            Review this pull request's diff for correctness bugs, security
+            issues, and clear best-practice problems. Skip nits and anything
+            a linter or formatter already enforces.
+            ${{ inputs.ponytail && 'Also apply the ponytail-review skill (from the ponytail plugin) to the same diff, hunting over-engineering: reinvented standard library, unneeded dependencies, speculative abstractions, dead flexibility. One line per finding: location, what to cut, what replaces it. These findings are advisory and never block; list them in a final **Simplify (ponytail)** section, omitted when empty.' || '' }}
+
+            Your final message is delivered as the PR review comment
+            automatically — do NOT post any comment or review yourself. Just
+            produce the review:
+            - Start with a single bold verdict line: `**✅ No blocking issues
+              — safe to merge.**` when nothing is blocking, or `**❌ Changes
+              requested — see findings below.**` when there are blocking
+              issues.
+            - Follow with a short bullet list of blocking findings, each
+              citing `path:line` and, where a concrete fix exists, a fenced
+              code block with the fix.
+            - If nothing is blocking, say so briefly; do not pad.
+            ${{ inputs.extra_instructions }}
+          claude_args: |
+            --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*)"
+
+      # The action has no built-in cost display, but its execution log's
+      # final result record carries the run metrics — append them to the
+      # review comment. The sticky comment has no marker; find it the way
+      # the action itself does (latest comment by a claude bot), and PATCH
+      # with the action's own token so we edit as the comment's author.
+      # With subscription (OAuth) auth the cost is the API-equivalent
+      # estimate, not an actual charge.
+      - name: Append cost to review comment
+        if: inputs.show_cost && steps.claude.outputs.execution_file != ''
+        env:
+          GH_TOKEN: ${{ steps.claude.outputs.github_token || github.token }}
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          read -r cost ms turns < <(jq -r '[.[] | select(.type=="result")] | last |
+            if . == null then "" else "\(.total_cost_usd) \(.duration_ms | floor) \(.num_turns)" end' \
+            "$EXECUTION_FILE") || true
+          if [ -z "${cost:-}" ] || [ "$cost" = "null" ]; then exit 0; fi
+          footer=$(printf '\n\n---\n*💰 Estimated review cost: $%.2f · %dm%02ds · %s turns*' \
+            "$cost" $((ms / 60000)) $((ms / 1000 % 60)) "$turns")
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
+            --jq '.[] | select(.user.type == "Bot" and (.user.login | ascii_downcase | contains("claude"))) | .id' \
+            | tail -1)
+          if [ -z "$id" ]; then exit 0; fi
+          gh api "repos/$GITHUB_REPOSITORY/issues/comments/$id" --jq .body > "$RUNNER_TEMP/body.md"
+          printf '%s' "$footer" >> "$RUNNER_TEMP/body.md"
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" \
+            -F body=@"$RUNNER_TEMP/body.md" > /dev/null
