@@ -42,6 +42,7 @@ All inputs are optional (pass under `with:`):
 - `plugins` / `plugin_marketplaces` — install your own Claude Code plugins (newline-separated `name@marketplace` and marketplace `.git` URLs). Caller-supplied marketplaces install unpinned from their default branch — only the built-in ponytail install is pinned to an exact commit.
 - `extra_instructions` — text appended to the review prompt, e.g. to direct Claude to use a custom plugin's skill.
 - `show_cost` (default `true`) — appends the estimated review cost (API-equivalent), duration, and turn count to the review comment; set `false` to hide.
+- `model` — model ID for the review (e.g. `claude-opus-4-8` for a more capable review). Empty uses Claude Code's default model (currently a Sonnet-tier model). Note: with subscription auth, bigger models consume the plan's usage quota faster.
 
 `secrets: inherit` picks up the org-level `CLAUDE_CODE_OAUTH_TOKEN` secret, so most repos need no secret setup at all. To use a different token for one repo, either add a repo-level secret with the same name (it shadows the org secret), or map one explicitly instead of inheriting:
 

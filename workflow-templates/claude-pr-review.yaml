@@ -22,6 +22,7 @@ jobs:
     #   extra_instructions: |      # ...and tell the reviewer to use them
     #     Also apply the my-plugin review skill.
     #   show_cost: false           # hide the cost footer on the comment
+    #   model: claude-opus-4-8     # review model (default: Claude Code default)
     permissions:
       contents: read
       pull-requests: write
