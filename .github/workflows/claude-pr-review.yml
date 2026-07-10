@@ -38,6 +38,10 @@ on:
         description: Extra instructions appended to the review prompt (e.g. directing Claude to use a custom plugin's skill).
         type: string
         default: ""
+      show_cost:
+        description: Append the estimated review cost to the PR review comment.
+        type: boolean
+        default: true
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN:
         description: Long-lived Claude Code OAuth token; create with `claude setup-token`.
@@ -81,6 +85,7 @@ jobs:
           git -C "$RUNNER_TEMP/ponytail" checkout -q FETCH_HEAD
 
       - uses: anthropics/claude-code-action@v1
+        id: claude
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           # Allow the github-actions bot to trigger the review so that
@@ -130,3 +135,32 @@ jobs:
             ${{ inputs.extra_instructions }}
           claude_args: |
             --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*)"
+
+      # The action has no built-in cost display, but its execution log's
+      # final result record carries the run metrics — append them to the
+      # review comment. The sticky comment has no marker; find it the way
+      # the action itself does (latest comment by a claude bot), and PATCH
+      # with the action's own token so we edit as the comment's author.
+      # With subscription (OAuth) auth the cost is the API-equivalent
+      # estimate, not an actual charge.
+      - name: Append cost to review comment
+        if: inputs.show_cost && steps.claude.outputs.execution_file != ''
+        env:
+          GH_TOKEN: ${{ steps.claude.outputs.github_token || github.token }}
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          read -r cost ms turns < <(jq -r '[.[] | select(.type=="result")] | last |
+            if . == null then "" else "\(.total_cost_usd) \(.duration_ms | floor) \(.num_turns)" end' \
+            "$EXECUTION_FILE") || true
+          if [ -z "${cost:-}" ] || [ "$cost" = "null" ]; then exit 0; fi
+          footer=$(printf '\n\n---\n*💰 Estimated review cost: $%.2f · %dm%02ds · %s turns*' \
+            "$cost" $((ms / 60000)) $((ms / 1000 % 60)) "$turns")
+          id=$(gh api "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" --paginate \
+            --jq '.[] | select(.user.type == "Bot" and (.user.login | ascii_downcase | contains("claude"))) | .id' \
+            | tail -1)
+          if [ -z "$id" ]; then exit 0; fi
+          gh api "repos/$GITHUB_REPOSITORY/issues/comments/$id" --jq .body > "$RUNNER_TEMP/body.md"
+          printf '%s' "$footer" >> "$RUNNER_TEMP/body.md"
+          gh api -X PATCH "repos/$GITHUB_REPOSITORY/issues/comments/$id" \
+            -F body=@"$RUNNER_TEMP/body.md" > /dev/null

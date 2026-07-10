@@ -21,6 +21,7 @@ jobs:
     #     https://github.com/my-org/my-marketplace.git
     #   extra_instructions: |      # ...and tell the reviewer to use them
     #     Also apply the my-plugin review skill.
+    #   show_cost: false           # hide the cost footer on the comment
     permissions:
       contents: read
       pull-requests: write
