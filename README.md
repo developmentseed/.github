@@ -36,6 +36,12 @@ jobs:
     secrets: inherit
 ```
 
+All inputs are optional (pass under `with:`):
+
+- `ponytail` (default `true`) — set `false` to drop the over-engineering pass.
+- `plugins` / `plugin_marketplaces` — install your own Claude Code plugins (newline-separated `name@marketplace` and marketplace `.git` URLs). Caller-supplied marketplaces install unpinned from their default branch — only the built-in ponytail install is pinned to an exact commit.
+- `extra_instructions` — text appended to the review prompt, e.g. to direct Claude to use a custom plugin's skill.
+
 `secrets: inherit` picks up the org-level `CLAUDE_CODE_OAUTH_TOKEN` secret, so most repos need no secret setup at all. To use a different token for one repo, either add a repo-level secret with the same name (it shadows the org secret), or map one explicitly instead of inheriting:
 
 ```yaml

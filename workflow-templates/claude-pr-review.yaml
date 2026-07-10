@@ -12,6 +12,15 @@ on:
 jobs:
   review:
     uses: developmentseed/.github/.github/workflows/claude-pr-review.yml@main
+    # All inputs are optional:
+    # with:
+    #   ponytail: false            # drop the over-engineering pass
+    #   plugins: |                 # install your own plugins...
+    #     my-plugin@my-marketplace
+    #   plugin_marketplaces: |
+    #     https://github.com/my-org/my-marketplace.git
+    #   extra_instructions: |      # ...and tell the reviewer to use them
+    #     Also apply the my-plugin review skill.
     permissions:
       contents: read
       pull-requests: write

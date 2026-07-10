@@ -12,10 +12,32 @@
 #         pull-requests: write
 #         id-token: write
 #       secrets: inherit  # or map CLAUDE_CODE_OAUTH_TOKEN explicitly
+#
+# Optional inputs (via `with:`): disable the ponytail pass, install extra
+# plugins, or append review instructions — see the inputs block below.
 name: Claude PR Review
 
 on:
   workflow_call:
+    inputs:
+      ponytail:
+        description: Include the ponytail over-engineering review pass.
+        type: boolean
+        default: true
+      plugins:
+        description: Extra Claude Code plugins to install (newline-separated name@marketplace).
+        type: string
+        default: ""
+      plugin_marketplaces:
+        description: >-
+          Marketplace git URLs for the extra plugins (newline-separated, must
+          end in .git). Unpinned — the action installs their default branch.
+        type: string
+        default: ""
+      extra_instructions:
+        description: Extra instructions appended to the review prompt (e.g. directing Claude to use a custom plugin's skill).
+        type: string
+        default: ""
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN:
         description: Long-lived Claude Code OAuth token; create with `claude setup-token`.
@@ -50,6 +72,7 @@ jobs:
       # upgrade: pick a release from https://github.com/DietrichGebert/ponytail/tags
       # and update the SHA + version comment together.
       - name: Fetch ponytail plugin (v4.8.4, pinned)
+        if: inputs.ponytail
         run: |
           git init -q "$RUNNER_TEMP/ponytail"
           git -C "$RUNNER_TEMP/ponytail" fetch -q --depth 1 \
@@ -76,24 +99,22 @@ jobs:
           use_sticky_comment: true
           # The ponytail plugin supplies the over-engineering review skill
           # used in the prompt below; installed from the commit-pinned clone
-          # fetched above.
-          plugin_marketplaces: ${{ runner.temp }}/ponytail
+          # fetched above. Caller-supplied plugins are appended (the action
+          # trims and drops blank lines, so empty inputs are harmless).
+          plugin_marketplaces: |
+            ${{ inputs.ponytail && format('{0}/ponytail', runner.temp) || '' }}
+            ${{ inputs.plugin_marketplaces }}
           plugins: |
-            ponytail@ponytail
+            ${{ inputs.ponytail && 'ponytail@ponytail' || '' }}
+            ${{ inputs.plugins }}
           prompt: |
             REPO: ${{ github.repository }}
             PR: ${{ github.event.pull_request.number }}
 
-            Review this pull request's diff on two axes:
-
-            1. Correctness: bugs, security issues, and clear best-practice
-               problems. Skip nits and anything a linter or formatter already
-               enforces.
-            2. Over-engineering: apply the ponytail-review skill (from the
-               ponytail plugin) to the same diff — reinvented standard
-               library, unneeded dependencies, speculative abstractions, dead
-               flexibility. One line per finding: location, what to cut, what
-               replaces it.
+            Review this pull request's diff for correctness bugs, security
+            issues, and clear best-practice problems. Skip nits and anything
+            a linter or formatter already enforces.
+            ${{ inputs.ponytail && 'Also apply the ponytail-review skill (from the ponytail plugin) to the same diff, hunting over-engineering: reinvented standard library, unneeded dependencies, speculative abstractions, dead flexibility. One line per finding: location, what to cut, what replaces it. These findings are advisory and never block; list them in a final **Simplify (ponytail)** section, omitted when empty.' || '' }}
 
             Your final message is delivered as the PR review comment
             automatically — do NOT post any comment or review yourself. Just
@@ -101,14 +122,11 @@ jobs:
             - Start with a single bold verdict line: `**✅ No blocking issues
               — safe to merge.**` when nothing is blocking, or `**❌ Changes
               requested — see findings below.**` when there are blocking
-              issues. Only correctness findings block; over-engineering
-              findings are advisory.
-            - Follow with a short bullet list of correctness findings, each
+              issues.
+            - Follow with a short bullet list of blocking findings, each
               citing `path:line` and, where a concrete fix exists, a fenced
               code block with the fix.
-            - End with a `**Simplify (ponytail)**` section listing the
-              over-engineering findings; omit the section when there are
-              none.
             - If nothing is blocking, say so briefly; do not pad.
+            ${{ inputs.extra_instructions }}
           claude_args: |
             --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*)"
