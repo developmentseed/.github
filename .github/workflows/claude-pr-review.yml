@@ -42,6 +42,10 @@ on:
         description: Append the estimated review cost to the PR review comment.
         type: boolean
         default: true
+      model:
+        description: Model for the review (e.g. claude-opus-4-8); empty uses the Claude Code default.
+        type: string
+        default: ""
     secrets:
       CLAUDE_CODE_OAUTH_TOKEN:
         description: Long-lived Claude Code OAuth token; create with `claude setup-token`.
@@ -135,6 +139,7 @@ jobs:
             ${{ inputs.extra_instructions }}
           claude_args: |
             --allowedTools "Bash(gh pr diff:*),Bash(gh pr view:*)"
+            ${{ inputs.model && format('--model {0}', inputs.model) || '' }}
 
       # The action has no built-in cost display, but its execution log's
       # final result record carries the run metrics — append them to the
