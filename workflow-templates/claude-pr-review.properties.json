@@ -1,0 +1,8 @@
+{
+    "name": "Claude PR Review",
+    "description": "Claude reviews every pull request for correctness and security issues, plus an over-engineering pass via the ponytail review skill. Posts one sticky comment per PR that updates on every push. Requires the CLAUDE_CODE_OAUTH_TOKEN secret.",
+    "categories": [
+        "code-review",
+        "automation"
+    ]
+}

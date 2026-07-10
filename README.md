@@ -10,6 +10,39 @@ Recommended reading:
 - [Creating starter workflows](https://docs.github.com/en/actions/using-workflows/creating-starter-workflows-for-your-organization)
 - [Using starter workflows](https://docs.github.com/en/actions/using-workflows/using-starter-workflows)
 
+### Claude PR Review
+
+[`claude-pr-review.yml`](.github/workflows/claude-pr-review.yml) has Claude review every pull request for correctness and security issues, plus an over-engineering pass via the [ponytail](https://github.com/DietrichGebert/ponytail) review skill. Findings land in one sticky PR comment that updates in place on every push.
+
+Add it to a repo (or pick the "Claude PR Review" starter workflow under Actions → New workflow):
+
+```yaml
+# .github/workflows/claude-review.yml
+name: Claude Auto Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, ready_for_review, reopened]
+    paths-ignore:
+      - '.github/workflows/**'
+
+jobs:
+  review:
+    uses: developmentseed/.github/.github/workflows/claude-pr-review.yml@main
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+```
+
+#### Creating the `CLAUDE_CODE_OAUTH_TOKEN` secret
+
+1. On a machine with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and logged in with a Claude subscription (Pro/Max), run `claude setup-token`.
+2. Approve the OAuth flow in the browser and copy the generated long-lived token (starts with `sk-ant-oat01-`).
+3. Save it as an Actions secret named `CLAUDE_CODE_OAUTH_TOKEN` — at the org level (Settings → Secrets and variables → Actions → New organization secret) so every repo can use it, or per-repo.
+
 
 ## Multiple Pull Request templates
 
