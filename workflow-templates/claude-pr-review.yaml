@@ -35,4 +35,5 @@ jobs:
     # `inherit` with an explicit mapping:
     #   secrets:
     #     CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.MY_OTHER_TOKEN }}
-    secrets: inherit
+    secrets:
+      CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
