@@ -1,32 +1,31 @@
 # Security Policy
 
-## Reporting a vulnerability
+Thank you for helping keep Development Seed's open source projects and their users safe.
 
-**Do not report vulnerabilities in public issues, discussions, or pull requests.**
+## Reporting a Vulnerability
 
-Use the **Report a vulnerability** button on the affected repository's **Security** tab. Only you and the maintainers can see the report.
+If you believe you've found a security vulnerability in one of our projects, please report it privately using one of the following:
 
-If you can't use GitHub, email **security@developmentseed.org** with a short summary (email isn't encrypted). We'll reply with a private advisory where you can share the details.
+- **GitHub Private Vulnerability Reporting (preferred):** Go to the repository's **Security** tab and click **Report a vulnerability**. See [GitHub's guide to privately reporting a security vulnerability](https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing-information-about-vulnerabilities/privately-reporting-a-security-vulnerability#privately-reporting-a-security-vulnerability) for details.
+- **Email:** [security@developmentseed.org](mailto:security@developmentseed.org)
 
-Please include the affected package and version(s), the impact, and steps to reproduce.
+Please **do not** report security vulnerabilities through public GitHub issues, pull requests, or discussions.
 
-## What to expect
+## What to Include
 
-- Acknowledgement within **3 business days**, and an initial assessment within **10**
-- Regular updates, and a chance to retest the fix
-- A fix and public advisory within **90 days**, on a disclosure date we agree with you
-- Credit in the advisory, unless you prefer to stay anonymous
+Helpful reports usually include:
 
-We publish fixes as a patched release plus a [GitHub Security Advisory](https://github.com/advisories) (with a CVE where appropriate), so tools like Dependabot and Renovate notify users. Please don't publish details until the advisory is public.
+- The affected project and version(s)
+- A description of the vulnerability and its potential impact
+- Steps to reproduce, or a proof of concept
+- A suggested fix or mitigation, if you have one — this is always welcome!
 
-## Scope
+## What to Expect
 
-This policy covers public repositories under [developmentseed](https://github.com/developmentseed) and the packages published from them. Only the latest release is supported unless a project says otherwise. Archived repositories aren't covered.
+We will review your report, and if necessary, work on a fix or mitigating steps. We'll keep you informed of the outcome.
 
-Out of scope: demo and documentation sites, third-party deployments, and vulnerabilities in dependencies (please report those upstream).
+We're happy to credit you for your disclosure in the published advisory or release notes. Let us know how you'd like to be credited, or if you'd prefer to remain anonymous.
 
-We don't offer a paid bug bounty.
+## Disclosure
 
-## Safe harbour
-
-We won't pursue legal action over good-faith research that follows this policy. Test only against your own installations, don't access or change others' data, don't disrupt services, and keep details confidential until disclosure.
+Please do not disclose the vulnerability publicly until it has been resolved. Once we have either (a) released a fix, or (b) let you know we've decided not to address it, you are free to disclose it publicly.
