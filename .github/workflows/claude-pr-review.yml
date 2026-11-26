@@ -122,12 +122,18 @@ jobs:
 
             Review this pull request's diff for correctness bugs, security
             issues, and clear best-practice problems. Skip nits and anything
-            a linter or formatter already enforces.
+            a linter or formatter already enforces. Use `gh pr diff` and
+            `gh pr view` to read the change; read surrounding files for context.
             ${{ inputs.ponytail && 'Also apply the ponytail-review skill (from the ponytail plugin) to the same diff, hunting over-engineering: reinvented standard library, unneeded dependencies, speculative abstractions, dead flexibility. One line per finding: location, what to cut, what replaces it. These findings are advisory and never block; list them in a final **Simplify (ponytail)** section, omitted when empty.' || '' }}
 
-            Your final message is delivered as the PR review comment
-            automatically — do NOT post any comment or review yourself. Just
-            produce the review:
+            Deliver the review by calling
+            `mcp__github_comment__update_claude_comment` exactly once at the
+            end, with the complete review as the new comment body (it replaces
+            the "I'll analyze this" placeholder). This step is required: a
+            review that is not written into that comment is lost. Do not post
+            any other comment or PR review, and do not use `gh` to comment.
+
+            Comment body format:
             - Start with a single bold verdict line: `**✅ No blocking issues
               — safe to merge.**` when nothing is blocking, or `**❌ Changes
               requested — see findings below.**` when there are blocking
